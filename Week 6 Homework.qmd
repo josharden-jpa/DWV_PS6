@@ -1,0 +1,223 @@
+---
+title: "Replicating Mondak & Sanders (2003): Tolerance and Intolerance, 1976–1998"
+subtitle: "DWV Assignment 6"
+author: "Josh Arden"
+date: today
+format:
+  pdf:
+    toc: false
+    number-sections: false
+    fig-width: 7
+    fig-height: 4.5
+    fig-pos: "H"
+  html: default
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+```{r}
+#| label: setup
+#| include: false
+
+# Runs all data cleaning and builds every figure object from the script.
+# ps6.R and gss7224_r1.dta must be in the same folder as this .qmd file.
+source("ps6.R")
+
+library(knitr)
+
+# Shared labels for the replication figures
+rep_x <- "Survey year"
+```
+
+All code used to clean the data and build the figures is in `ps6.R` in the
+accompanying GitHub repository: https://github.com/josharden-jpa/DWV_PS6.
+
+# Replication
+
+## Figure 1: The 0–15 Tolerance Battery
+
+```{r}
+#| label: fig-1
+#| fig-cap: "Mean score on the 15-item GSS modified Stouffer battery, 1976–1998. Higher scores represent greater intolerance."
+
+fig1 +
+  labs(title    = "The 0–15 GSS Modified Stouffer Tolerance Battery, 1976–1998",
+       subtitle = "High scores represent intolerance",
+       x = rep_x, y = "Mean intolerance score (0–15)",
+       caption  = gss_caption) +
+  theme_mondak
+```
+
+## Figure 2: Intolerance Toward Racists and Homosexuals
+
+```{r}
+#| label: fig-2
+#| fig-cap: "Mean score on the three tolerance items for each target group, 1976–1998 (0 = fully tolerant, 3 = fully intolerant)."
+
+fig2 +
+  labs(title    = "Intolerance Toward Racists and Homosexuals, 1976–1998",
+       subtitle = "Blue = racists; red = homosexuals",
+       x = rep_x, y = "Mean intolerance score (0–3)",
+       caption  = gss_caption) +
+  theme_mondak
+```
+
+## Figure 5: A Dichotomous Measure of Intolerance
+
+```{r}
+#| label: fig-5
+#| fig-cap: "Share of respondents giving at least one intolerant answer on the 15-item battery, 1976–1998."
+
+fig5 +
+  labs(title    = "A Dichotomous Measure of Tolerance and Intolerance, 1976–1998",
+       subtitle = "Intolerant = any score above 0 out of 15",
+       x = rep_x, y = "Proportion intolerant",
+       caption  = gss_caption) +
+  theme_mondak
+```
+
+## Extension: All Available Years
+
+```{r}
+#| label: fig-1-all
+#| fig-cap: "Figure 1 extended through 2024."
+
+fig1_all +
+  labs(title = "The 0–15 Tolerance Battery, All Years",
+       subtitle = "High scores represent intolerance",
+       x = rep_x, y = "Mean intolerance score (0–15)",
+       caption = gss_caption) +
+  theme_mondak
+```
+
+```{r}
+#| label: fig-2-all
+#| fig-cap: "Figure 2 extended through 2024."
+
+fig2_all +
+  labs(title = "Intolerance Toward Racists and Homosexuals, All Years",
+       subtitle = "Blue = racists; red = homosexuals",
+       x = rep_x, y = "Mean intolerance score (0–3)",
+       caption = gss_caption) +
+  theme_mondak
+```
+
+```{r}
+#| label: fig-5-all
+#| fig-cap: "Figure 5 extended through 2024."
+
+fig5_all +
+  labs(title = "Dichotomous Measure of Intolerance, All Years",
+       subtitle = "Intolerant = any score above 0 out of 15",
+       x = rep_x, y = "Proportion intolerant",
+       caption = gss_caption) +
+  theme_mondak
+```
+
+# Original Work: Two GSS Variables in 2024
+
+## Television Viewing (TVHOURS)
+
+```{r}
+#| label: tbl-tv
+#| tbl-cap: "Summary statistics for daily hours of television, 2024 GSS."
+
+kable(tibble(
+  N      = nrow(tv),
+  Mean   = round(mean(tv$tvhours), 2),
+  Median = median(tv$tvhours),
+  SD     = round(sd(tv$tvhours), 2),
+  `25th pct.` = quantile(tv$tvhours, 0.25),
+  `75th pct.` = quantile(tv$tvhours, 0.75),
+  Max    = max(tv$tvhours)
+))
+```
+
+```{r}
+#| label: fig-tv
+#| fig-cap: "Distribution of self-reported daily television viewing, 2024 GSS."
+
+fig_tv
+```
+
+The most common answer is two hours, given by about 500 respondents, and the
+median is also two hours. The mean, however, is a little over three hours.
+The middle 50% of respondents watch between one and four hours a day. The
+mean is pulled upward by outliers who report watching 20 or 24 hours a day,
+which probably means they literally never turn their TV off, even while they
+are sleeping. The distribution is skewed right: most answers bunch up around
+one, two, and three hours, with a small tail stretching out to the right.
+
+## Going to a Bar or Tavern (SOCBAR)
+
+```{r}
+#| label: fig-bar
+#| fig-cap: "How often respondents go to a bar or tavern, 2024 GSS."
+
+fig_bar
+```
+
+The median answer is "about once a year," which is quite surprising to me,
+and 45% of respondents never go to a bar or tavern at all. I can understand
+never going, but I would like to know what the occasion is for the people who
+go once a year. Maybe it is for their own birthday, or for New Year's, the one
+night out with friends. Apart from a small bump from "about once a year" to
+"several times a year," the number of respondents decreases as the frequency
+increases. In other words, the more trips to the bar an answer represents, the
+fewer respondents give that answer. The middle 50% of respondents fall
+between "about once a month" and "never." Technically, that range covers four
+of the seven answer categories, but in substance the answers are not far
+apart: everyone in the middle half goes to a bar once a month at most.
+
+# Discussion
+
+## 1. Problems With the Replication
+
+The main problems I encountered in this replication were figuring out how the
+responses were coded and how to properly recode them, and working out whether
+each score should run from 0 to 15 or from 0 to 3. It was also tricky to
+determine exactly what kind of graph was being used in the original figures.
+
+There was also a bug in my first version of Figure 2. When calculating the
+scores for intolerance toward homosexuals, I used the wrong data object (the
+one that had not been filtered to 1976–1998 or recoded). Because none of the
+recoded columns existed in that object, every respondent got a score of 0, and
+the line for homosexuals showed up flat at zero across all years. Once I used
+the correctly filtered and recoded data, the line matched the paper's
+downward trend.
+
+## 2. Interpreting Figures 1, 2, and 5
+
+In Figure 1, the mean intolerance score drops by roughly 27% between 1977
+and 1998. This doesn't tell us about any one particular group: some answers
+could be becoming more tolerant while others become less tolerant. Overall,
+though, people are scoring as more tolerant than they were decades ago.
+
+Figure 2 shows that while intolerance toward racists stays relatively the
+same, intolerance toward homosexuals declines. So even though people don't
+feel any better or worse about racists, they do become more tolerant toward
+homosexuals over the same period. In other words, it isn't that people
+overall are disliking bigotry more; by this scoring, they are presumably
+becoming more accepting of homosexuality. This changes how Figure 1 should be
+read: it could be that only tolerance toward the specific groups named in the
+questions has risen, while overall intolerance, especially toward new ideas
+and groups beyond the ones the questions were about at the time, has not.
+
+Figure 5 shows that the proportion of people who were intolerant in any way
+has gone down. About 15% of respondents answered tolerant to all of the
+questions in 1988, compared with 21% in 1998. Even so, a significant portion
+of respondents, roughly four in five, remain intolerant of at least one group.
+
+## 3. What Has Changed Since 1998?
+
+Many things have changed since 1998. Looking at intolerance toward
+homosexuals, for example, same-sex marriage is now legal nationwide. This
+could show that attitudes were already trending toward acceptance, or the
+newer norms, standards, and laws might in turn lead people to become more
+tolerant because same-sex relationships are more normalized. There has also
+been a lot of division since 1998, and many events could have a big effect on
+how people answer the tolerance questions. These include 9/11, which caused a
+lot of intolerance toward Muslim and Arab people. So some of the scores might
+be different for different reasons.
